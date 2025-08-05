@@ -2,33 +2,12 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
 defineProps<{ msg: string }>()
-/*
-const players = ref<Map<string, number>>(new Map([
 
-  ['PlayerA', 3],
-  ['PlayerB', 10],
-  ['PlayerC', 5],
-  ['PlayerD', 4],
-  ['PlayerE', 4],
-  ['PlayerF', 3],
-  ['PlayerG', 2],
-  ['PlayerH', 1],
-  ['PlayerI', 0],
-  ['Player10', 0],
-  ['Player11', 0],
-  ['Player12', 0],
-  ['Player13', 0],
-  ['Player14', 1],
-  ['Player15', 0],
-  ['Player16', 0],
-  ['Player17', 0],
-  ['Player18', 0]
-
-
-]))
-    */
+const newPlayerName = ref('')
+const sorted = ref(false)
+const hoveredPlayer = ref<string | null>(null)
+const showTopThree = ref(false)
 const LS_KEY = 'mrc_players'
-
 const storedPlayers = localStorage.getItem(LS_KEY)
 const players = ref<Map<string, number>>(storedPlayers
     ? new Map(JSON.parse(storedPlayers))
@@ -38,16 +17,36 @@ watch(players, (val) => {
   localStorage.setItem(LS_KEY, JSON.stringify(Array.from(val.entries())))
 }, { deep: true })
 
-const newPlayerName = ref('')
-const sorted = ref(false)
-const hoveredPlayer = ref<string | null>(null)
-const showTopThree = ref(false)
-
 
 function resetPlayers() {
+  if (!confirm('Are you sure you want to reset all players?')) {
+    return
+  }
+  downloadPlayers()
   players.value.clear()
   localStorage.removeItem(LS_KEY)
 }
+
+function downloadPlayers() {
+  let data = Array.from(players.value.entries())
+      .map(([name, points]) => `${name},${points}`)
+      .join('\n')
+  const date = new Date().toLocaleDateString('de-DE', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
+  const header = 'MusikRatenCounter,'+date+'\nPlayer,Points\n'
+  data = header + data
+  const blob = new Blob([data], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'players.csv'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 function updatePoints(name: string, newPoints: number) {
   players.value.set(name, newPoints)
   if (sorted.value) {
