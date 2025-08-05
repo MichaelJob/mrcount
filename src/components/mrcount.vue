@@ -54,7 +54,7 @@ function updatePoints(name: string, newPoints: number) {
   }
 }
 function addPlayer(name: string) {
-  players.value.set(name, 0)
+  players.value.set(name, 1)
 }
 
 function deletePlayer(name: string) {

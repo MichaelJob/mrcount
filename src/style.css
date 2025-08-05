@@ -10,8 +10,15 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background: #242424 linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  background: #242424 linear-gradient(135deg, #6f4e93 0%, #4887f3 100%);
   color: rgba(255, 255, 255, 0.87);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    background: #242424 linear-gradient(135deg, #381460 0%, #193e7c 100%);
+    color: rgba(255, 255, 255, 0.87);
+  }
 }
 
 a {
@@ -47,6 +54,12 @@ button {
   background-color: #d9dcfa;
   cursor: pointer;
   transition: border-color 0.25s;
+}
+@media (prefers-color-scheme: dark) {
+  button {
+    background-color: #333333;
+    color: #fff;
+  }
 }
 button:hover {
   border-color: #646cff;
